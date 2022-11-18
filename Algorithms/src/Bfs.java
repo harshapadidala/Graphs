@@ -16,6 +16,8 @@ public class Bfs {
             Integer node = queue.poll();
             result.add(node);
 
+            // Get all adjacent vertices of the dequeued vertex 'node' from adjacency list
+            // If adjacent vertex has not been visited mark it visited and enqueue it
             for(Integer i : adj.get(node)) {
                 if(!visited[i]) {
                     visited[i] = true;
