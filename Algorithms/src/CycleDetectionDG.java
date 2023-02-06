@@ -1,4 +1,8 @@
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+
 public class CycleDetectionDG {
     private boolean dfsCheck(int node, ArrayList<ArrayList<Integer>> adj, int vis[], int pathVis[]) {
         vis[node] = 1;
@@ -34,6 +38,46 @@ public class CycleDetectionDG {
         }
         return false;
     }
+
+    public boolean hasCycleKahns(ArrayList<ArrayList<Integer>> graph) {
+        int V = graph.size();
+        int[] indegrees = new int[V];
+
+        //populate in degrees of each vertex
+        for (int i=0; i<V; i++) {
+            for(int neighbour : graph.get(i)) {
+                indegrees[neighbour]++;
+            }
+        }
+
+        Queue<Integer> queue = new LinkedList<>();
+        //start with nodes with no dependencies (no incoming edges these can be at start of list)
+        for (int i=0; i<V; i++) {
+            if(indegrees[i] == 0) {
+                queue.add(i);
+            }
+        }
+
+        int index = 0;
+
+        while (!queue.isEmpty()) {
+            Integer node = queue.remove();
+            index++;
+            //remove node from graph and decrease degree of all affected nodes
+            for (int neighbour : graph.get(node)) {
+                indegrees[neighbour]--;
+                if(indegrees[neighbour] == 0) {
+                    queue.add(neighbour);
+                }
+            }
+        }
+
+        if(index != V) {
+            return true;
+        }
+
+        return false;
+    }
     public static void main(String[] args) {
         int V = 11;
         ArrayList<ArrayList<Integer>> adj = new ArrayList<>();
@@ -52,7 +96,8 @@ public class CycleDetectionDG {
         adj.get(10).add(8);
 
         CycleDetectionDG obj = new CycleDetectionDG();
-        boolean ans = obj.isCyclic(V, adj);
+//        boolean ans = obj.isCyclic(V, adj);
+        boolean ans = obj.hasCycleKahns(adj);
         if (ans)
             System.out.println("True");
         else
