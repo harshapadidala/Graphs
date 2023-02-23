@@ -40,7 +40,7 @@ public class DijkstrasAlgorithm {
             pq.poll();
             // neat optimization we can do which ignores stale pairs in our PQ is to skip nodes where we already
             // found a better path routing through other nodes
-            if(distances[node] < distance) {
+            if(distances[node] < distance) { 
                 continue;
             }
 
