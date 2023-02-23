@@ -1,16 +1,13 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Comparator;
+import java.util.*;
 
 public class DijkstrasAlgorithm {
     class Pair {
-        int distance;
         int node;
+        int distance;
 
-        public Pair(int distance, int node) {
-            this.distance = distance;
+        public Pair(int node, int distance) {
             this.node = node;
+            this.distance = distance;
         }
     }
 
@@ -28,7 +25,7 @@ public class DijkstrasAlgorithm {
 
     private int[] dijkstra(int V,ArrayList<ArrayList<ArrayList<Integer>>> adj, int S) {
         PriorityQueue<Pair> pq = new PriorityQueue<Pair>(new DistanceComparator());
-        pq.add(new Pair(0, S));
+        pq.add(new Pair(S, 0));
 
         int[] distances = new int[V];
         for(int i=0; i<V; i++) {
@@ -38,9 +35,14 @@ public class DijkstrasAlgorithm {
 
         while (!pq.isEmpty()) {
             Pair p = pq.peek();
-            int distance = p.distance;
             int node = p.node;
+            int distance = p.distance;
             pq.poll();
+            // neat optimization we can do which ignores stale pairs in our PQ is to skip nodes where we already
+            // found a better path routing through other nodes
+            if(distances[node] < distance) {
+                continue;
+            }
 
             ArrayList<ArrayList<Integer>> neighbours = adj.get(node);
 
@@ -50,7 +52,7 @@ public class DijkstrasAlgorithm {
                 int edgeWeight = neighbour.get(1);
                 if(distance + edgeWeight < distances[adjNode]) {
                     distances[adjNode] = distance + edgeWeight;
-                    pq.add(new Pair(distances[adjNode], adjNode));
+                    pq.add(new Pair(adjNode, distances[adjNode]));
                 }
             }
         }
